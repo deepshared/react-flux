@@ -168,7 +168,9 @@ data ReactElement eventHandler
 
 instance Monoid (ReactElement eventHandler) where
     mempty = EmptyElement
-    mappend x y = Append x y
+
+instance Semigroup (ReactElement eventHandler) where
+    x <> y = Append x y
 
 instance Functor ReactElement where
     fmap f (ForeignElement n p c) = ForeignElement n (map (fmap f) p) (fmap f c)
@@ -211,7 +213,9 @@ elementToM a e = ReactElementM (WriterT (Identity (a, e)))
 
 instance (a ~ ()) => Monoid (ReactElementM eventHandler a) where
     mempty = elementToM () EmptyElement
-    mappend e1 e2 =
+
+instance (a ~ ()) => Semigroup (ReactElementM eventHandler a) where
+    e1 <> e2 =
         let ((),e1') = runWriter $ runReactElementM e1
             ((),e2') = runWriter $ runReactElementM e2
          in elementToM () $ Append e1' e2'
