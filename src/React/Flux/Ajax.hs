@@ -24,7 +24,7 @@ import Control.Arrow ((***))
 import Control.DeepSeq (deepseq)
 import GHCJS.Foreign.Callback
 import GHCJS.Foreign (jsNull)
-import GHCJS.Marshal (ToJSVal(..), toJSVal_aeson, FromJSVal(..))
+import GHCJS.Marshal (ToJSVal(..), FromJSVal(..))
 import GHCJS.Types (JSVal)
 import qualified Data.Text as T
 import qualified Data.JSString.Text as JSS
@@ -38,6 +38,9 @@ import React.Flux.Export
 data RequestTimeout = TimeoutMilliseconds Int | NoTimeout
 
 #ifdef __GHCJS__
+toJSVal_aeson :: ToJSON a => a -> IO JSVal
+toJSVal_aeson = toJSVal . toJSON
+
 instance ToJSVal RequestTimeout where
     toJSVal (TimeoutMilliseconds i) = toJSVal i
     toJSVal NoTimeout = pure jsNull
